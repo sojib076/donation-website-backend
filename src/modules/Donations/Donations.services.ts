@@ -1,15 +1,23 @@
+import { ImageModel } from "../Images/Images.model";
 import { IDonation } from "./Donations.interface";
 import { DonationModel } from "./Donations.model";
 
 
 
- const createDonation = async (payload:IDonation,imageFile:string) => {
-    
-    
+ const createDonation = async (payload:IDonation,imageFile:string,fileName: string) => {
+   
+
     const result = await DonationModel.create({
         ...payload,
         image: imageFile
     });
+
+    await ImageModel.create({
+        name: fileName,
+        url: imageFile
+    });
+
+
      return result;
 
    
@@ -22,7 +30,7 @@ const getDonations = async (pagestring: string, limitstring: string) => {
     const limit = parseInt(limitstring, 10);
     const skip = (page - 1) * limit;
 
-    // Get total count of donations
+    
    
 
     // Fetch paginated results
@@ -33,7 +41,7 @@ const getDonations = async (pagestring: string, limitstring: string) => {
         .limit(limit);
         const totalDonations =(await DonationModel.countDocuments({ status: 'active' }));
 
-    // Check if there are more donations
+   
 
 
     return {
@@ -55,12 +63,12 @@ const deleteDonation = async (id: string) => {
 
 const markDonationAsCollected = async (id: string) => {
     const findDonation = await DonationModel.findById(id);
-    console.log(findDonation);
+   
     if (!findDonation) {
         return null;
     }
     const targetDonation = findDonation.target
-    console.log(targetDonation);
+    
     const result = await DonationModel.findByIdAndUpdate(id, {
         current : targetDonation,
         progress: 100,

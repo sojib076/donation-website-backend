@@ -18,9 +18,10 @@ const asyncHandler_1 = require("../../utils/asyncHandler");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const Donations_services_1 = require("./Donations.services");
 const createDonation = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const imageFile = (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.path;
-    const result = yield Donations_services_1.DonationsService.createDonation(req.body, imageFile);
+    var _a, _b;
+    const fileName = (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.originalname;
+    const imageFile = (_b = req === null || req === void 0 ? void 0 : req.file) === null || _b === void 0 ? void 0 : _b.path;
+    const result = yield Donations_services_1.DonationsService.createDonation(req.body, imageFile, fileName);
     if (!result) {
         return (0, sendResponse_1.default)(res, {
             statusCode: http_status_1.default.NOT_FOUND,

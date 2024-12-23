@@ -15,3 +15,5 @@ const DonationSchema = new Schema <IDonation>({
 
   
   export const DonationModel = model<IDonation>('Donation', DonationSchema);
+
+

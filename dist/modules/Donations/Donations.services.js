@@ -10,16 +10,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DonationsService = void 0;
+const Images_model_1 = require("../Images/Images.model");
 const Donations_model_1 = require("./Donations.model");
-const createDonation = (payload, imageFile) => __awaiter(void 0, void 0, void 0, function* () {
+const createDonation = (payload, imageFile, fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield Donations_model_1.DonationModel.create(Object.assign(Object.assign({}, payload), { image: imageFile }));
+    yield Images_model_1.ImageModel.create({
+        name: fileName,
+        url: imageFile
+    });
     return result;
 });
 const getDonations = (pagestring, limitstring) => __awaiter(void 0, void 0, void 0, function* () {
     const page = parseInt(pagestring, 10);
     const limit = parseInt(limitstring, 10);
     const skip = (page - 1) * limit;
-    // Get total count of donations
     // Fetch paginated results
     const result = yield Donations_model_1.DonationModel.find({
         status: 'active',
@@ -27,7 +31,6 @@ const getDonations = (pagestring, limitstring) => __awaiter(void 0, void 0, void
         .skip(skip)
         .limit(limit);
     const totalDonations = (yield Donations_model_1.DonationModel.countDocuments({ status: 'active' }));
-    // Check if there are more donations
     return {
         currentPage: page,
         limit,
@@ -44,12 +47,10 @@ const deleteDonation = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const markDonationAsCollected = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const findDonation = yield Donations_model_1.DonationModel.findById(id);
-    console.log(findDonation);
     if (!findDonation) {
         return null;
     }
     const targetDonation = findDonation.target;
-    console.log(targetDonation);
     const result = yield Donations_model_1.DonationModel.findByIdAndUpdate(id, {
         current: targetDonation,
         progress: 100,
